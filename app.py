@@ -1,12 +1,12 @@
 import plotly.express as px
 from shiny.express import input, ui
 from shinywidgets import render_plotly
-from shiny import render
+from shiny import render, reactive
 import palmerpenguins
 import seaborn as sns
 
 # Use the built-in function to load the Palmer Penguins dataset
-penguins = palmerpenguins.load_penguins()
+penguins_df = palmerpenguins.load_penguins()
 
 ui.page_opts(title="Palmer Penguins: Hansen", fillable=True)
 
@@ -84,7 +84,7 @@ with ui.layout_columns():
         @render_plotly
         def penguins_plot1():
             return px.histogram(
-                penguins, x=input.selected_attribute(), nbins=input.plotly_bin_count()
+                penguins_df, x=input.selected_attribute(), nbins=input.plotly_bin_count()
             )
 
     with ui.card():
@@ -93,7 +93,7 @@ with ui.layout_columns():
         @render.plot
         def penguins_plot2():
             return sns.histplot(
-                data=penguins,
+                data=penguins_df,
                 x=input.selected_attribute(),
                 bins=input.seaborn_bin_count(),
             )
@@ -109,7 +109,7 @@ with ui.layout_columns():
             # Call px.scatter() function
             # Pass in six arguments
             return px.scatter(
-                data_frame=penguins,
+                data_frame=penguins_df,
                 x="body_mass_g",
                 y="bill_depth_mm",
                 color="species",
@@ -125,8 +125,17 @@ with ui.layout_columns():
 
     @render.data_frame
     def penguins_df1():
-        return render.DataGrid(penguins)
+        return render.DataGrid(penguins_df)
 
     @render.data_frame
     def penguins_df2():
-        return render.DataTable(penguins)
+        return render.DataTable(penguins_df)
+
+# Add a reactive calculation to filter the data
+# By decorating the function with @reactive, we can use the function to filter the data
+# The function will be called whenever an input functions used to generate that output changes.
+# Any output that depends on the reactive function (e.g., filtered_data()) will be updated when the data changes.
+
+@reactive.calc
+def filtered_data():
+    return penguins_df
