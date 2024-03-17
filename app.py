@@ -84,7 +84,7 @@ with ui.layout_columns():
         @render_plotly
         def penguins_plot1():
             return px.histogram(
-                penguins_df, x=input.selected_attribute(), nbins=input.plotly_bin_count()
+                filtered_data(), x=input.selected_attribute(), nbins=input.plotly_bin_count()
             )
 
     with ui.card():
@@ -93,7 +93,7 @@ with ui.layout_columns():
         @render.plot
         def penguins_plot2():
             return sns.histplot(
-                data=penguins_df,
+                data=filtered_data(),
                 x=input.selected_attribute(),
                 bins=input.seaborn_bin_count(),
             )
@@ -109,7 +109,7 @@ with ui.layout_columns():
             # Call px.scatter() function
             # Pass in six arguments
             return px.scatter(
-                data_frame=penguins_df,
+                data_frame=filtered_data(),
                 x="body_mass_g",
                 y="bill_depth_mm",
                 color="species",
