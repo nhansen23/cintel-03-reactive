@@ -79,28 +79,6 @@ with ui.sidebar(open="open"):
 
 with ui.layout_columns():
     with ui.card():
-        ui.card_header("Plotly Histogram: Species")
-
-        @render_plotly
-        def penguins_plot1():
-            return px.histogram(
-                filtered_data(), x=input.selected_attribute(), nbins=input.plotly_bin_count()
-            )
-
-    with ui.card():
-        ui.card_header("Seaborn Histogram: Species")
-
-        @render.plot
-        def penguins_plot2():
-            return sns.histplot(
-                data=filtered_data(),
-                x=input.selected_attribute(),
-                bins=input.seaborn_bin_count(),
-            )
-
-
-with ui.layout_columns():
-    with ui.card():
         ui.card_header("Plotly Scatterplot: Species")
 
         @render_plotly
@@ -119,17 +97,33 @@ with ui.layout_columns():
                 },
                 size_max=8,
             )
+    
+    with ui.navset_card_underline(title="Histograms"):
+        with ui.nav_panel("Plotly Histogram"):
+            @render_plotly
+            def penguins_plot1():
+                return px.histogram(
+                filtered_data(), x=input.selected_attribute(), nbins=input.plotly_bin_count()
+                )
 
+        with ui.nav_panel("Seaborn Histogram"):
+            @render.plot
+            def penguins_plot2():
+                return sns.histplot(
+                    data=filtered_data(),
+                    x=input.selected_attribute(),
+                    bins=input.seaborn_bin_count(),
+                )
 
-with ui.layout_columns():
-
-    @render.data_frame
-    def penguins_df1():
-        return render.DataGrid(penguins_df)
-
-    @render.data_frame
-    def penguins_df2():
-        return render.DataTable(penguins_df)
+with ui.navset_card_underline(title="Data"):
+    with ui.nav_panel("Data Grid"):
+        @render.data_frame
+        def penguins_df1():
+            return render.DataGrid(penguins_df)
+    with ui.nav_panel("Data Table"):
+        @render.data_frame
+        def penguins_df2():
+            return render.DataTable(penguins_df)
 
 # Add a reactive calculation to filter the data
 # By decorating the function with @reactive, we can use the function to filter the data
