@@ -119,11 +119,11 @@ with ui.navset_card_underline(title="Data"):
     with ui.nav_panel("Data Grid"):
         @render.data_frame
         def penguins_df1():
-            return render.DataGrid(penguins_df)
+            return render.DataGrid(filtered_data())
     with ui.nav_panel("Data Table"):
         @render.data_frame
         def penguins_df2():
-            return render.DataTable(penguins_df)
+            return render.DataTable(filtered_data())
 
 # Add a reactive calculation to filter the data
 # By decorating the function with @reactive, we can use the function to filter the data
@@ -132,4 +132,5 @@ with ui.navset_card_underline(title="Data"):
 
 @reactive.calc
 def filtered_data():
-    return penguins_df
+    filtered_rows = penguins_df["species"].isin(input.selected_species())
+    return penguins_df[filtered_rows]
